@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StudentsDiary.Properties;
+using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
@@ -9,37 +10,45 @@ namespace StudentsDiary
     {
         private FileHelper<List<Student>> _fileHelper = new FileHelper<List<Student>>
             (Program.filePath);
+        public bool IsMaximized 
+        {
+            get
+            {
+                return Settings.Default.IsMaximized;
+            }
+            set
+            {
+                Settings.Default.IsMaximized = value;
+            }
+        }
 
         //private delegate void DisplayMessage(string message);
 
         public Main()
         {
             InitializeComponent();
+           
             RefreshDiary();
+            //SetDataGridViewHeaders();
 
-            //var messages = new Action<string>(DisplayMessage1);
-            //messages += DisplayMessage2;
-            //messages("test");
-            //var list = new List<Person>() {
-            //    new Student { FirstName = "Koles", LastName = "Kotsiek", Math = "3" },
-            //    new Teacher { FirstName = "Koles", LastName = "Kotsiek" },
+            if (IsMaximized)
+                WindowState = FormWindowState.Minimized;
 
-            //};
 
-            //foreach (var item in list)
-            //{
-            //    MessageBox.Show(item.GetInfo());
-            //}
         }
 
-       public void DisplayMessage1(string message)
+        private void SetDataGridViewHeaders()
         {
-            MessageBox.Show($"Method 1 - {message}");
-        }
-        public void DisplayMessage2(string message)
-        {
-            MessageBox.Show($"Method 2 - {message}");
-        }
+            dgvDiary.Columns[0].HeaderText = "Id";
+            dgvDiary.Columns[1].HeaderText = "FirstName";
+            dgvDiary.Columns[2].HeaderText = "LastName";
+            dgvDiary.Columns[3].HeaderText = "Comments";
+            dgvDiary.Columns[4].HeaderText = "Math";
+            dgvDiary.Columns[5].HeaderText = "Technology";
+            dgvDiary.Columns[6].HeaderText = "Physics";
+            dgvDiary.Columns[7].HeaderText = "English";
+
+    }
 
         public void RefreshDiary()
         {
@@ -51,13 +60,13 @@ namespace StudentsDiary
         private void btnAdd_Click(object sender, EventArgs e)
         {
             var addEditStudent = new AddEditStudent();
-            addEditStudent.StudentAdded += AddEditStudent_StudentAdded;
+            addEditStudent.FormClosing += AddEditStudent_FormClosing;
             addEditStudent.ShowDialog();
-            addEditStudent.StudentAdded -= AddEditStudent_StudentAdded;
+            addEditStudent.FormClosing -= AddEditStudent_FormClosing;
 
         }
 
-        private void AddEditStudent_StudentAdded()
+        private void AddEditStudent_FormClosing(object sender, FormClosingEventArgs e)
         {
             RefreshDiary();
         }
@@ -75,7 +84,9 @@ namespace StudentsDiary
                 return;
             }
             var addEditStudent = new AddEditStudent((Convert.ToInt32(dgvDiary.SelectedRows[0].Cells[0].Value)));
+            addEditStudent.FormClosing += AddEditStudent_FormClosing;
             addEditStudent.ShowDialog();
+            addEditStudent.FormClosing -= AddEditStudent_FormClosing;
 
         }
 
@@ -124,6 +135,15 @@ namespace StudentsDiary
                
             }
 
-        
+        private void Main_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if(WindowState== FormWindowState.Maximized)
+            
+                IsMaximized = true;
+            else
+                    IsMaximized = false;
+
+            Settings.Default.Save();
+        }
     }
     }

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 
@@ -13,8 +15,7 @@ namespace StudentsDiary
         private Student _student;
         private int _studentId;
 
-        public delegate void MySimpleDelegate();
-        public event MySimpleDelegate StudentAdded;
+
         public AddEditStudent(int id = 0)
         {
             InitializeComponent();
@@ -33,10 +34,7 @@ namespace StudentsDiary
             }
         }
 
-        private void OnStudentAdded()
-        {
-            StudentAdded?.Invoke();
-        }
+       
         private void FillTextBoxes()
         {
                 tbId.Text = _student.Id.ToString();
@@ -49,14 +47,19 @@ namespace StudentsDiary
                 tbEnglish.Text = _student.English;
                 tbTech.Text = _student.Technology;
         }
-        private void btnSubmit_Click(object sender, EventArgs e)
+        private async void btnSubmit_Click(object sender, EventArgs e)
         {
 
             GetStudentData();
-            this.Close();
+            await LongProcessAsync();
+            Close();
 
         }
-
+        private async Task LongProcessAsync()
+        {
+            await Task.Run(() => { Thread.Sleep(3000); });
+            
+        }
         private void GetStudentData()
         {
             bool ifStudentAvailable = int.TryParse(tbId.Text, out _studentId);
@@ -73,7 +76,7 @@ namespace StudentsDiary
             }
 
             _fileHelper.SerializeToFile(students);
-            OnStudentAdded();
+          
             Close();
         }
 
@@ -111,6 +114,8 @@ namespace StudentsDiary
 
             
         }
+
+
 
         private void AssignIdToNewStudent(List<Student> students)
         {
