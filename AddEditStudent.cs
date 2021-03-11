@@ -30,8 +30,6 @@ namespace StudentsDiary
                     throw new Exception("No student under provided Id");
 
                 FillUpForm();
-
-                this.Show();
             }
         }
 

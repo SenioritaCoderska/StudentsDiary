@@ -30,19 +30,23 @@ namespace StudentsDiary
         {
             InitializeComponent();
 
-            RefreshDiary();
-
             if (IsMaximized)
                 WindowState = FormWindowState.Minimized;
 
             cmbFilter.Items.AddRange(Program.classesAtSchool);
+            cmbFilter.SelectedIndex = 0;
 
+            RefreshDiary();
         }
 
         public void RefreshDiary()
         {
           _students = _fileHelper.DeserializedFromFile();
             dgvDiary.DataSource = _students;
+            dgvDiary.ReadOnly = true;
+
+            //you could refresh filter ith that
+            //PutFilterOnDGV();
         }
 
 
@@ -72,7 +76,7 @@ namespace StudentsDiary
                 MessageBox.Show("Please select the student you want to edit");
                 return;
             }
-            var addEditStudent = new AddEditStudent((Convert.ToInt32(dgvDiary.SelectedRows[0].Cells[0].Value)));
+            var addEditStudent = new AddEditStudent((Convert.ToInt32(dgvDiary.SelectedRows[0].Cells["Id"].Value)));
             addEditStudent.FormClosing += AddEditStudent_FormClosing;
             addEditStudent.ShowDialog();
             addEditStudent.FormClosing -= AddEditStudent_FormClosing;
@@ -137,8 +141,14 @@ namespace StudentsDiary
 
         private void cmbFilter_SelectedIndexChanged(object sender, EventArgs e)
         {
+            PutFilterOnDGV();
+
+        }
+
+        private void PutFilterOnDGV()
+        {
             string groupId = cmbFilter.SelectedItem.ToString();
-            if(groupId == "Show all")
+            if (groupId == "Show all")
             {
                 dgvDiary.DataSource = _students;
                 dgvDiary.Refresh();
@@ -149,7 +159,6 @@ namespace StudentsDiary
                 dgvDiary.DataSource = chosenList;
                 dgvDiary.Refresh();
             }
-
         }
     }
 }
