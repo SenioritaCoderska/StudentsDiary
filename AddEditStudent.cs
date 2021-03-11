@@ -9,8 +9,9 @@ namespace StudentsDiary
 {
     public partial class AddEditStudent : Form
     {
-        private FileHelper<List<Student>> _fileHelper = new FileHelper<List<Student>>
-         (Program.filePath);
+        private FileHelper<List<Student>> _fileHelper = new FileHelper<List<Student>> (Program.filePath);
+        private Student _student;
+        private int _studentId;
         public AddEditStudent(int id = 0)
         {
             InitializeComponent();
@@ -18,77 +19,96 @@ namespace StudentsDiary
             if (id != 0)
             {
                 var students = _fileHelper.DeserializedFromFile();
-                var student = students.FirstOrDefault(x => x.Id == id);
+                _student = students.FirstOrDefault(x => x.Id == id);
 
-                if (student == null)
+                if (_student == null)
                     throw new Exception("No student under provided Id");
 
-                tbId.Text = student.Id.ToString();
-                tbFirstName.Text = student.FirstName;
-                tbLastName.Text = student.LastName;
-                rtbComments.Text = student.Comments;
-                tbMath.Text = student.Math;
-                tbPhysics.Text = student.Math;
-                tbPolish.Text = student.Polish;
-                tbEnglish.Text = student.English;
-                tbTech.Text = student.Technology;
+                FillTextBoxes();
 
                 this.Show();
             }
         }
-        
+        private void FillTextBoxes()
+        {
+                tbId.Text = _student.Id.ToString();
+                tbFirstName.Text = _student.FirstName;
+                tbLastName.Text = _student.LastName;
+                rtbComments.Text = _student.Comments;
+                tbMath.Text = _student.Math;
+                tbPhysics.Text = _student.Math;
+                tbPolish.Text = _student.Polish;
+                tbEnglish.Text = _student.English;
+                tbTech.Text = _student.Technology;
+        }
         private void btnSubmit_Click(object sender, EventArgs e)
         {
-            
+
+            GetStudentData();
+            this.Close();
+
+        }
+
+        private void GetStudentData()
+        {
+            bool ifStudentAvailable = int.TryParse(tbId.Text, out _studentId);
+
             var students = _fileHelper.DeserializedFromFile();
-            int studentId;
 
-
-            if (tbId.Text != null)
+            if (ifStudentAvailable)
             {
-                var ifStudentAvailable = int.TryParse(tbId.Text, out studentId);
-                Student selectStudentBasedOnId = students
-                .OrderByDescending(x => x.Id == studentId).FirstOrDefault();
-
-                selectStudentBasedOnId.Id = studentId;
-                selectStudentBasedOnId.FirstName = tbFirstName.Text;
-                selectStudentBasedOnId.LastName = tbLastName.Text;
-                selectStudentBasedOnId.Comments = rtbComments.Text;
-                selectStudentBasedOnId.Math = tbMath.Text;
-                selectStudentBasedOnId.Physics = tbPhysics.Text;
-                selectStudentBasedOnId.Polish = tbPolish.Text;
-                selectStudentBasedOnId.English = tbEnglish.Text;
-
-                _fileHelper.SerializeToFile(students);
+                UpdateExistingUser(students);
             }
             else
             {
-                var studentWithHighestId = students
-                    .OrderByDescending(x => x.Id).FirstOrDefault();
+                AddNewUserToList(students);
+            }
 
-                studentId = studentWithHighestId == null ?
-                1 : studentWithHighestId.Id + 1;
+            _fileHelper.SerializeToFile(students);
+        }
 
-                var student = new Student
-                {
-                    Id = studentId,
-                    FirstName = tbFirstName.Text,
-                    LastName = tbLastName.Text,
-                    Comments = rtbComments.Text,
-                    Math = tbMath.Text,
-                    Physics = tbPhysics.Text,
-                    Polish = tbPolish.Text,
-                    English = tbEnglish.Text,
-                    Technology = tbTech.Text
-                };
-                students.Add(student);
-                _fileHelper.SerializeToFile(students);
+        private void UpdateExistingUser(List<Student> students)
+        {
+            Student selectStudentBasedOnId = students
+                    .OrderByDescending(x => x.Id == _studentId).FirstOrDefault();
+
+            selectStudentBasedOnId.Id = _studentId;
+            selectStudentBasedOnId.FirstName = tbFirstName.Text;
+            selectStudentBasedOnId.LastName = tbLastName.Text;
+            selectStudentBasedOnId.Comments = rtbComments.Text;
+            selectStudentBasedOnId.Math = tbMath.Text;
+            selectStudentBasedOnId.Physics = tbPhysics.Text;
+            selectStudentBasedOnId.Polish = tbPolish.Text;
+            selectStudentBasedOnId.English = tbEnglish.Text;
+        }
+        private void AddNewUserToList(List<Student> students)
+        {
+            AssignIdToNewStudent(students);
+
+            var student = new Student
+            {
+                Id = _studentId,
+                FirstName = tbFirstName.Text,
+                LastName = tbLastName.Text,
+                Comments = rtbComments.Text,
+                Math = tbMath.Text,
+                Physics = tbPhysics.Text,
+                Polish = tbPolish.Text,
+                English = tbEnglish.Text,
+                Technology = tbTech.Text
             };
-             
-            
-            this.Close();
+            students.Add(student);
+        }
 
+        private void AssignIdToNewStudent(List<Student> students)
+        {
+            var studentWithHighestId = students
+                   .OrderByDescending(x => x.Id).FirstOrDefault();
 
+            _studentId = studentWithHighestId == null ?
+            1 : studentWithHighestId.Id + 1;
         }
     }
 }
+
+

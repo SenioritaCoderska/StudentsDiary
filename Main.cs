@@ -18,7 +18,7 @@ namespace StudentsDiary
         }
 
        
-        private void RefreshDiary()
+        public void RefreshDiary()
         {
             var students = _fileHelper.DeserializedFromFile();
             dgvDiary.DataSource = students;
@@ -45,8 +45,8 @@ namespace StudentsDiary
                 return;
             }
             var addEditStudent = new AddEditStudent((Convert.ToInt32(dgvDiary.SelectedRows[0].Cells[0].Value)));
-
-           
+            addEditStudent.ShowDialog();
+            RefreshDiary();
 
         }
 
@@ -59,7 +59,7 @@ namespace StudentsDiary
             else
             {
 
-            
+
                 var selectedStudent = dgvDiary.SelectedRows[0];
 
                 try
@@ -72,10 +72,8 @@ namespace StudentsDiary
                     //
                     if (confirmDelete == DialogResult.OK)
                     {
-                        var students = _fileHelper.DeserializedFromFile();
-                        students.RemoveAll(x => x.Id == Convert.ToInt32(selectedStudent.Cells[0].Value));
-                        _fileHelper.SerializeToFile(students);
-                        dgvDiary.DataSource = students;
+                        DeleteStudent(Convert.ToInt32(selectedStudent.Cells[0].Value));
+                        RefreshDiary();
 
                     }
 
@@ -85,9 +83,17 @@ namespace StudentsDiary
                     MessageBox.Show(ex.Message);
                 }
 
-                
+
+            }
+        }
+
+            private void DeleteStudent(int id)
+            {
+                var students = _fileHelper.DeserializedFromFile();
+                students.RemoveAll(x => x.Id == id);
+                _fileHelper.SerializeToFile(students);
+               
             }
 
         }
     }
-}

@@ -219,7 +219,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(484, 361);
+            this.ClientSize = new System.Drawing.Size(484, 461);
             this.Controls.Add(this.btSubmit);
             this.Controls.Add(this.btCancel);
             this.Controls.Add(this.lbComments);
@@ -240,8 +240,8 @@
             this.Controls.Add(this.tbMath);
             this.Controls.Add(this.tbTech);
             this.Controls.Add(this.tbId);
-            this.MaximumSize = new System.Drawing.Size(500, 400);
-            this.MinimumSize = new System.Drawing.Size(500, 0);
+            this.MaximumSize = new System.Drawing.Size(500, 500);
+            this.MinimumSize = new System.Drawing.Size(500, 500);
             this.Name = "AddEditStudent";
             this.Text = "AddEditStudent";
             this.ResumeLayout(false);
