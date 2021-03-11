@@ -8,12 +8,17 @@ namespace StudentsDiary
 {
     public class Student:Person
     {
+        public Student()
+        {
+            Address = new Address();
+        }
 
         public string Math { get; set; }
         public string Technology { get; set; }
         public string Physics { get; set; }
         public string Polish { get; set; }
         public string English { get; set; }
+        public Address Address { get; set; }
 
         public override string GetInfo()
         {
