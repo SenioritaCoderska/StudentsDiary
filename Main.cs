@@ -1,6 +1,7 @@
 ﻿using StudentsDiary.Properties;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 
 
@@ -10,7 +11,8 @@ namespace StudentsDiary
     {
         private FileHelper<List<Student>> _fileHelper = new FileHelper<List<Student>>
             (Program.filePath);
-        public bool IsMaximized 
+        private List<Student> _students = new List<Student>();
+        public bool IsMaximized
         {
             get
             {
@@ -27,35 +29,22 @@ namespace StudentsDiary
         public Main()
         {
             InitializeComponent();
-           
+
             RefreshDiary();
-            //SetDataGridViewHeaders();
 
             if (IsMaximized)
                 WindowState = FormWindowState.Minimized;
 
+            cmbFilter.Items.AddRange(Program.classesAtSchool);
 
         }
-
-        private void SetDataGridViewHeaders()
-        {
-            dgvDiary.Columns[0].HeaderText = "Id";
-            dgvDiary.Columns[1].HeaderText = "FirstName";
-            dgvDiary.Columns[2].HeaderText = "LastName";
-            dgvDiary.Columns[3].HeaderText = "Comments";
-            dgvDiary.Columns[4].HeaderText = "Math";
-            dgvDiary.Columns[5].HeaderText = "Technology";
-            dgvDiary.Columns[6].HeaderText = "Physics";
-            dgvDiary.Columns[7].HeaderText = "English";
-
-    }
 
         public void RefreshDiary()
         {
-            var students = _fileHelper.DeserializedFromFile();
-            dgvDiary.DataSource = students;
+          _students = _fileHelper.DeserializedFromFile();
+            dgvDiary.DataSource = _students;
         }
-        
+
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
@@ -78,7 +67,7 @@ namespace StudentsDiary
 
         private void btnEdit_Click(object sender, EventArgs e)
         {
-            if(dgvDiary.SelectedRows.Count == 0)
+            if (dgvDiary.SelectedRows.Count == 0)
             {
                 MessageBox.Show("Please select the student you want to edit");
                 return;
@@ -127,23 +116,40 @@ namespace StudentsDiary
             }
         }
 
-            private void DeleteStudent(int id)
-            {
-                var students = _fileHelper.DeserializedFromFile();
-                students.RemoveAll(x => x.Id == id);
-                _fileHelper.SerializeToFile(students);
-               
-            }
+        private void DeleteStudent(int id)
+        {
+            var students = _fileHelper.DeserializedFromFile();
+            students.RemoveAll(x => x.Id == id);
+            _fileHelper.SerializeToFile(students);
+
+        }
 
         private void Main_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if(WindowState== FormWindowState.Maximized)
-            
+            if (WindowState == FormWindowState.Maximized)
+
                 IsMaximized = true;
             else
-                    IsMaximized = false;
+                IsMaximized = false;
 
             Settings.Default.Save();
         }
+
+        private void cmbFilter_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            string groupId = cmbFilter.SelectedItem.ToString();
+            if(groupId == "Show all")
+            {
+                dgvDiary.DataSource = _students;
+                dgvDiary.Refresh();
+            }
+            else
+            {
+                var chosenList = _students.Where(x => x.GroupId == groupId).ToList();
+                dgvDiary.DataSource = chosenList;
+                dgvDiary.Refresh();
+            }
+
+        }
     }
-    }
+}

@@ -11,7 +11,9 @@ namespace StudentsDiary
         /// </summary>
         /// 
         public static string filePath = Path.Combine(Environment.CurrentDirectory, "students.txt");
-        [STAThread]
+        public static string[] classesAtSchool = new string[] { "Show all", "1A", "1B", "2A", "2B", "3A", "3B" };
+
+    [STAThread]
         static void Main()
         {
             Application.EnableVisualStyles();
