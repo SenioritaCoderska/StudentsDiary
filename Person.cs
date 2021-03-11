@@ -12,5 +12,11 @@ namespace StudentsDiary
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Comments { get; set; }
+
+
+        public virtual string GetInfo()
+        {
+            return string.Empty;
+        }
     }
 }

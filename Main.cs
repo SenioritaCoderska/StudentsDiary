@@ -14,7 +14,16 @@ namespace StudentsDiary
         {
             InitializeComponent();
             RefreshDiary();
+            var list = new List<Person>() {
+                new Student { FirstName = "Koles", LastName = "Kotsiek", Math = "3" },
+                new Teacher { FirstName = "Koles", LastName = "Kotsiek" },
 
+            };
+
+            foreach (var item in list)
+            {
+                MessageBox.Show(item.GetInfo());
+            }
         }
 
        

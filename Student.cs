@@ -14,5 +14,10 @@ namespace StudentsDiary
         public string Physics { get; set; }
         public string Polish { get; set; }
         public string English { get; set; }
+
+        public override string GetInfo()
+        {
+            return $"{FirstName} {LastName} - Math notes: {Math}.";
+        }   
     }
 }

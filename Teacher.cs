@@ -9,5 +9,10 @@ namespace StudentsDiary
     public class Teacher : Person
     {
         public string position { get; set; }
+
+        public override string GetInfo()
+        {
+            return $"{FirstName} {LastName} - Teacher.";
+        }
     }
 }
