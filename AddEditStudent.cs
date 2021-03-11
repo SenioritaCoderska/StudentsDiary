@@ -12,6 +12,9 @@ namespace StudentsDiary
         private FileHelper<List<Student>> _fileHelper = new FileHelper<List<Student>> (Program.filePath);
         private Student _student;
         private int _studentId;
+
+        public delegate void MySimpleDelegate();
+        public event MySimpleDelegate StudentAdded;
         public AddEditStudent(int id = 0)
         {
             InitializeComponent();
@@ -28,6 +31,11 @@ namespace StudentsDiary
 
                 this.Show();
             }
+        }
+
+        private void OnStudentAdded()
+        {
+            StudentAdded?.Invoke();
         }
         private void FillTextBoxes()
         {
@@ -65,6 +73,8 @@ namespace StudentsDiary
             }
 
             _fileHelper.SerializeToFile(students);
+            OnStudentAdded();
+            Close();
         }
 
         private void UpdateExistingUser(List<Student> students)
@@ -98,6 +108,8 @@ namespace StudentsDiary
                 Technology = tbTech.Text
             };
             students.Add(student);
+
+            
         }
 
         private void AssignIdToNewStudent(List<Student> students)

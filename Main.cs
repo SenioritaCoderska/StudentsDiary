@@ -10,23 +10,37 @@ namespace StudentsDiary
         private FileHelper<List<Student>> _fileHelper = new FileHelper<List<Student>>
             (Program.filePath);
 
+        //private delegate void DisplayMessage(string message);
+
         public Main()
         {
             InitializeComponent();
             RefreshDiary();
-            var list = new List<Person>() {
-                new Student { FirstName = "Koles", LastName = "Kotsiek", Math = "3" },
-                new Teacher { FirstName = "Koles", LastName = "Kotsiek" },
 
-            };
+            //var messages = new Action<string>(DisplayMessage1);
+            //messages += DisplayMessage2;
+            //messages("test");
+            //var list = new List<Person>() {
+            //    new Student { FirstName = "Koles", LastName = "Kotsiek", Math = "3" },
+            //    new Teacher { FirstName = "Koles", LastName = "Kotsiek" },
 
-            foreach (var item in list)
-            {
-                MessageBox.Show(item.GetInfo());
-            }
+            //};
+
+            //foreach (var item in list)
+            //{
+            //    MessageBox.Show(item.GetInfo());
+            //}
         }
 
-       
+       public void DisplayMessage1(string message)
+        {
+            MessageBox.Show($"Method 1 - {message}");
+        }
+        public void DisplayMessage2(string message)
+        {
+            MessageBox.Show($"Method 2 - {message}");
+        }
+
         public void RefreshDiary()
         {
             var students = _fileHelper.DeserializedFromFile();
@@ -37,8 +51,15 @@ namespace StudentsDiary
         private void btnAdd_Click(object sender, EventArgs e)
         {
             var addEditStudent = new AddEditStudent();
+            addEditStudent.StudentAdded += AddEditStudent_StudentAdded;
             addEditStudent.ShowDialog();
+            addEditStudent.StudentAdded -= AddEditStudent_StudentAdded;
 
+        }
+
+        private void AddEditStudent_StudentAdded()
+        {
+            RefreshDiary();
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -55,7 +76,6 @@ namespace StudentsDiary
             }
             var addEditStudent = new AddEditStudent((Convert.ToInt32(dgvDiary.SelectedRows[0].Cells[0].Value)));
             addEditStudent.ShowDialog();
-            RefreshDiary();
 
         }
 
@@ -104,5 +124,6 @@ namespace StudentsDiary
                
             }
 
-        }
+        
+    }
     }
